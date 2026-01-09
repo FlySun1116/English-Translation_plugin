@@ -35,4 +35,4 @@
 
 1. 下载或克隆本仓库到本地
    ```bash
-   git clone https://github.com/yourusername/sun-tech-english-helper.git
+   git clone https://github.com/FlySun1116/English-Translation_plugin.git
