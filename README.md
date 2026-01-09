@@ -31,8 +31,8 @@
 
 ## 🚀 安装方法
 
-### 方式一：开发者模式安装（推荐）
 
-1. 下载或克隆本仓库到本地
+
+ 下载或克隆本仓库到本地
    ```bash
    git clone https://github.com/FlySun1116/English-Translation_plugin.git
