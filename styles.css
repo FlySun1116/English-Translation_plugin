@@ -1,0 +1,70 @@
+/* 查词浮窗 - 毛玻璃风格 */
+#sun-helper-panel {
+    position: fixed;
+    bottom: 40px;
+    right: 40px;
+    z-index: 2147483647;
+    display: none;
+    animation: sun-fade-in 0.3s ease-out;
+}
+
+.sun-inner {
+    background: rgba(255, 255, 255, 0.7) !important;
+    backdrop-filter: blur(15px) !important;
+    -webkit-backdrop-filter: blur(15px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.5) !important;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15) !important;
+    border-radius: 16px !important;
+    padding: 16px !important;
+    width: 220px !important;
+    font-family: "IBM Plex Sans", "Segoe UI", sans-serif !important;
+}
+
+.sun-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.sun-header strong {
+    font-size: 18px;
+    color: #007acc;
+}
+
+.sun-count-tag {
+    font-size: 10px;
+    background: rgba(0, 122, 204, 0.1);
+    color: #007acc;
+    padding: 2px 8px;
+    border-radius: 10px;
+}
+
+.sun-body {
+    font-size: 14px;
+    color: #333;
+    line-height: 1.4;
+}
+
+/* 网页内高亮单词样式 */
+.sun-highlight-mark {
+    background: rgba(0, 122, 204, 0.15) !important;
+    border-bottom: 2px solid #007acc !important;
+    color: inherit !important;
+    padding: 0 2px !important;
+    position: relative !important;
+    border-radius: 2px !important;
+}
+
+.sun-sub {
+    font-size: 9px !important;
+    color: #d9534f !important;
+    font-weight: bold !important;
+    margin-left: 2px !important;
+    vertical-align: super !important;
+}
+
+@keyframes sun-fade-in {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}

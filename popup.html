@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <script src="chart.min.js"></script>
+    <style>
+        :root {
+            --accent: #007acc;
+            --accent-soft: rgba(0, 122, 204, 0.15);
+            --warn: #d9534f;
+            --ink: #1c2333;
+            --glass: rgba(255, 255, 255, 0.52);
+            --glass-border: rgba(255, 255, 255, 0.65);
+        }
+        body { 
+            width: 348px;
+            margin: 0;
+            padding: 16px;
+            min-height: 470px;
+            background:
+                radial-gradient(120px 120px at 85% 8%, rgba(255, 255, 255, 0.55), transparent 60%),
+                radial-gradient(180px 160px at 15% 85%, rgba(0, 122, 204, 0.12), transparent 60%),
+                linear-gradient(135deg, #d6e7ff 0%, #f1e7ff 55%, #d5f4ff 100%);
+            font-family: "Space Grotesk", "IBM Plex Sans", "Segoe UI", sans-serif;
+            color: var(--ink);
+            letter-spacing: 0.2px;
+        }
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            padding: 18px;
+            box-shadow: 0 18px 38px rgba(14, 20, 40, 0.14);
+            position: relative;
+            overflow: hidden;
+            animation: floatIn 0.4s ease both;
+        }
+        .header {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-bottom: 14px;
+        }
+        .title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--ink);
+        }
+        .subtitle {
+            font-size: 12px;
+            color: rgba(28, 35, 51, 0.7);
+        }
+        .btn-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .view-switch {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin: 6px 0 12px;
+        }
+        .switch-btn {
+            padding: 8px 10px;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 122, 204, 0.25);
+            background: rgba(255, 255, 255, 0.65);
+            color: #0f1c35;
+            font-weight: 600;
+        }
+        .switch-btn.active {
+            background: rgba(0, 122, 204, 0.12);
+            color: #0063bf;
+            border-color: rgba(0, 122, 204, 0.4);
+        }
+        .search-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 12px;
+            margin: 4px 0 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.55);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .search-bar input {
+            flex: 1;
+            border: none;
+            outline: none;
+            background: transparent;
+            font-size: 12px;
+            color: #0f1c35;
+        }
+        button {
+            flex: 1;
+            border: none;
+            padding: 10px 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.55);
+            color: var(--ink);
+        }
+        button:hover { transform: translateY(-1px); box-shadow: 0 6px 14px rgba(0,0,0,0.08); }
+        button:active { transform: translateY(0); box-shadow: none; }
+        #highlightBtn {
+            background: var(--accent);
+            color: white;
+            border-color: rgba(0, 122, 204, 0.4);
+        }
+        #showChartBtn {
+            width: 100%;
+            margin-bottom: 12px;
+            color: var(--accent);
+            background: rgba(255,255,255,0.55);
+            border: 1px solid rgba(0,122,204,0.3);
+        }
+        h4 {
+            margin: 16px 0 10px;
+            font-size: 13px;
+            color: var(--ink);
+            border-left: 4px solid var(--accent);
+            padding-left: 8px;
+        }
+        .word-list { min-height: 160px; }
+        .word-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            background: rgba(255,255,255,0.35);
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.35);
+            position: relative;
+            cursor: pointer;
+            animation: rise 0.35s ease both;
+            animation-delay: var(--delay, 0ms);
+        }
+        .word-main {
+            font-weight: 600;
+            font-size: 13px;
+            color: #102140;
+        }
+        .word-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 11px;
+            color: rgba(28, 35, 51, 0.65);
+        }
+        .meaning-tag {
+            position: absolute;
+            left: 28px;
+            top: -30px;
+            background: rgba(10, 10, 12, 0.95);
+            color: #fff;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            display: none;
+            z-index: 1000;
+            white-space: nowrap;
+        }
+        .meaning-tag::after {
+            content: "";
+            position: absolute;
+            bottom: -5px;
+            left: 14px;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid rgba(10, 10, 12, 0.95);
+        }
+        .del-btn { color: var(--warn); cursor: pointer; font-size: 18px; }
+        .empty {
+            margin-top: 24px;
+            text-align: center;
+            font-size: 12px;
+            color: rgba(28, 35, 51, 0.6);
+        }
+        #chartView {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: calc(100% - 20px);
+            height: calc(100% - 20px);
+            background: rgba(255,255,255,0.75);
+            backdrop-filter: blur(30px);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 18px;
+            box-sizing: border-box;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.7);
+        }
+        #lineChart { width: 100%; height: 230px; }
+        #closeChart {
+            position: absolute;
+            top: 12px;
+            right: 14px;
+            cursor: pointer;
+            font-size: 22px;
+            color: rgba(28, 35, 51, 0.65);
+        }
+        @keyframes floatIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes rise {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="glass-card">
+        <div class="header">
+            <div class="title">Sun Tech English Helper</div>
+            <div class="subtitle">技术英语记忆控制塔</div>
+        </div>
+        <div class="btn-row">
+            <button id="highlightBtn">开启高亮</button>
+            <button id="removeBtn">清除高亮</button>
+        </div>
+        <div class="view-switch">
+            <button id="todayBtn" class="switch-btn active">今日记录</button>
+            <button id="historyBtn" class="switch-btn">历史次数榜</button>
+        </div>
+        <div class="search-bar">
+            <input id="searchInput" type="text" placeholder="搜索历史查询单词(*/ω＼*)..." aria-label="搜索单词">
+        </div>
+        <button id="showChartBtn">记忆趋势（10日居中）</button>
+        <h4 id="listTitle">今日查询</h4>
+        <div id="list" class="word-list"></div>
+        <div id="chartView">
+            <span id="closeChart">&times;</span>
+            <canvas id="lineChart" width="280" height="230"></canvas>
+        </div>
+    </div>
+    <script src="popup.js"></script>
+</body>
+</html>
